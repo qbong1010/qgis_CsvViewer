@@ -15,7 +15,7 @@ CSV 뷰어는 다음을 쉽게 해결해 줍니다:
 	•	🎛️ 자동 열 크기 조정: 열 너비를 데이터에 맞게 자동으로 최적화.
 	•	🛠️ 도킹 가능한 위젯: QGIS 작업 공간 어디에나 배치 가능.
 
-## 🧩 설치 방법
+## 🧩 설치 방법(비전공자 방법 추후 업데이트)
 	1.	이 저장소에서 플러그인을 다운로드하세요.
 	2.	플러그인 폴더를 QGIS 플러그인 디렉토리에 복사합니다:
 	•	Windows: C:\Users\<YourUsername>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\
