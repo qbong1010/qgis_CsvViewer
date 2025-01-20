@@ -1,0 +1,19 @@
+[general]
+name=CSV Viewer
+description=This plugin adds a CSV Viewer to QGIS.
+version=1.0
+qgisMinimumVersion=3.0
+author=Qbong from DOHWA
+email=urbanbong@dohwa.co.kr
+about=A simple CSV viewer plugin that allows you to view and search CSV files within QGIS
+repository=https://github.com/qbong1010/qgis_apitest.git
+tracker=https://github.com/qbong1010/qgis_apitest.git
+homepage=
+category=plugin
+icon=logo.webp
+experimental=True
+deprecated=False
+tags=csv,viewer,table
+hasProcessingProvider=false
+server=false
+plugin_dependencies=
