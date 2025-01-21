@@ -51,7 +51,7 @@ class CsvViewerDockWidget(QDockWidget):
     def open_csv(self, default=False):
         """Opens a CSV or TXT file and displays its content in the table."""
         if default:
-            file_path = os.path.join(os.path.dirname(__file__), 'default_data.txt')  # 파일 확장자 변경
+            file_path = os.path.join(os.path.dirname(__file__), 'default_data.csv')  # 파일 확장자 변경
             print(f"Default file path: {file_path}")  # 디버그 출력
         else:
             file_path, _ = QFileDialog.getOpenFileName(
