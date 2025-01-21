@@ -10,9 +10,19 @@ import os
 class CsvViewerDockWidget(QDockWidget):
 
     def __init__(self, iface):
-        super().__init__("CSV Viewer")
+        super().__init__("CSV Viewer by Qbong")
         self.iface = iface
         self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        
+        # 필요한 라이브러리 import
+        try:
+            import pandas as pd
+            self.pd = pd
+        except ImportError:
+            self.iface.messageBar().pushMessage(
+                "Error", "pandas 라이브러리가 필요합니다. pip install pandas를 실행하세요.", level=2
+            )
+            return
 
         # Main widget and layout
         self.widget = QWidget()
@@ -49,22 +59,44 @@ class CsvViewerDockWidget(QDockWidget):
         self.open_csv(default=True)
 
     def open_csv(self, default=False):
-        """Opens a CSV or TXT file and displays its content in the table."""
+        """Opens a CSV, TXT or Excel file and displays its content in the table."""
         if default:
-            file_path = os.path.join(os.path.dirname(__file__), 'default_data.csv')  # 파일 확장자 변경
-            print(f"Default file path: {file_path}")  # 디버그 출력
+            file_path = os.path.join(os.path.dirname(__file__), 'default_data.csv')
         else:
             file_path, _ = QFileDialog.getOpenFileName(
-                self, "Open CSV or TXT File", "C:\\Users\\dohwa\\Documents\\QGIS\\QPython Script\\매칭테이블", "CSV or TXT files (*.csv *.txt)"
+                self, "파일 열기", "", 
+                "모든 지원 파일 (*.csv *.txt *.xlsx *.xls);;CSV 파일 (*.csv);;텍스트 파일 (*.txt);;엑셀 파일 (*.xlsx *.xls)"
             )
         
         if file_path and os.path.exists(file_path):
             try:
-                with open(file_path, "r", encoding="utf-8") as file:
-                    # 구분자를 지정합니다. 필요에 따라 '\t' 또는 다른 구분자로 변경하세요.
-                    reader = csv.reader(file, delimiter=',')  # 기본은 쉼표로 설정
-                    headers = next(reader)
-                    self.original_data = list(reader)
+                file_ext = os.path.splitext(file_path)[1].lower()
+                
+                if file_ext == '.csv':
+                    # CSV 파일 처리
+                    df = self.pd.read_csv(file_path, encoding='utf-8')
+                elif file_ext == '.txt':
+                    # TXT 파일 처리 (탭, 쉼표, 세미콜론 구분자 자동 감지)
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        first_line = f.readline()
+                    if '\t' in first_line:
+                        delimiter = '\t'
+                    elif ',' in first_line:
+                        delimiter = ','
+                    elif ';' in first_line:
+                        delimiter = ';'
+                    else:
+                        delimiter = None
+                    df = self.pd.read_csv(file_path, encoding='utf-8', delimiter=delimiter)
+                elif file_ext in ['.xlsx', '.xls']:
+                    # 엑셀 파일 처리
+                    df = self.pd.read_excel(file_path)
+                else:
+                    raise ValueError("지원하지 않는 파일 형식입니다.")
+
+                # DataFrame을 테이블에 표시
+                headers = df.columns.tolist()
+                self.original_data = df.values.tolist()
 
                 # Initialize table
                 self.table.setRowCount(0)
@@ -76,10 +108,15 @@ class CsvViewerDockWidget(QDockWidget):
 
                 # Clear search input
                 self.search_input.clear()
+                
             except Exception as e:
-                print(f"Error opening file: {e}")
+                self.iface.messageBar().pushMessage(
+                    "Error", f"파일을 여는 중 오류가 발생했습니다: {str(e)}", level=2
+                )
         else:
-            print("File not found or path is incorrect!")  # 디버그 출력
+            self.iface.messageBar().pushMessage(
+                "Warning", "파일을 찾을 수 없거나 경로가 잘못되었습니다!", level=1
+            )
 
     def display_data(self, data):
         """Displays data in the table."""
