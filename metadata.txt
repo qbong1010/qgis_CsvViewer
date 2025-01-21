@@ -1,7 +1,7 @@
 [general]
 name=CSV Viewer
 description=This plugin adds a CSV Viewer to QGIS.
-version=1.0
+version=2.1
 qgisMinimumVersion=3.0
 author=Qbong from DOHWA
 email=urbanbong@dohwa.co.kr
