@@ -1,11 +1,6 @@
 [general]
 name=CSV Viewer
-description=법정동코드 확인하려고 텍스트파일과 QGIS 사이를 오가느라 지치지 않으셨나요? 
-CSV 뷰어는 다음을 쉽게 해결해 줍니다: 
-• CSV 파일을 번거로움 없이 불러오기. 
-• 데이터를 보기 좋게 테이블 형식으로 표시. 
-• 빠른 검색으로 필요한 데이터만 필터링.
-자세한 내용은 링크에서: https://github.com/qbong1010/qgis_CsvViewer
+description=법정동코드 확인하려고 텍스트파일과 QGIS 사이를 오가느라 지치지 않으셨나요? CSV 뷰어는 다음을 쉽게 해결해 줍니다: • CSV 파일을 번거로움 없이 불러오기. • 데이터를 보기 좋게 테이블 형식으로 표시. • 빠른 검색으로 필요한 데이터만 필터링.
 version=0.2
 qgisMinimumVersion=3.2
 author=Qbong from DOHWA
