@@ -24,13 +24,16 @@ class CsvViewerPlugin:
             self.iface.mainWindow()
         )
         self.action.setCheckable(True)
-        self.action.setChecked(True)
+        self.action.setChecked(False)
         self.action.triggered.connect(self.toggle_dock_widget)
         
         # Add menu item
         self.iface.addPluginToMenu("CSV Viewer", self.action)
         # Add to toolbar
         self.iface.addToolBarIcon(self.action)
+        
+        # dock widget을 처음에 숨김
+        self.dock_widget.hide()
 
     def toggle_dock_widget(self):
         """Show/hide the dock widget."""
