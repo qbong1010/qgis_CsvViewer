@@ -38,8 +38,8 @@ class CsvViewerDockWidget(QDockWidget):
         self.default_files_layout = QHBoxLayout()
         
         # 행정동코드 버튼
-        self.admin_code_button = QPushButton("행정동코드")
-        self.admin_code_button.clicked.connect(lambda: self.open_default_csv('sources/default_data.csv'))
+        self.admin_code_button = QPushButton("법정동코드")
+        self.admin_code_button.clicked.connect(lambda: self.open_default_csv('sources/법정동코드 전체자료.txt'))
         self.default_files_layout.addWidget(self.admin_code_button)
         
         # 용도지역분류코드 버튼
@@ -100,28 +100,47 @@ class CsvViewerDockWidget(QDockWidget):
         if file_path and os.path.exists(file_path):
             try:
                 file_ext = os.path.splitext(file_path)[1].lower()
-                
+                df = None
+                encodings_to_try = ['utf-8', 'cp949', 'euc-kr'] # 시도할 인코딩 목록
+
                 if file_ext == '.csv':
-                    # CSV 파일 처리
-                    df = self.pd.read_csv(file_path, encoding='utf-8')
+                    for encoding in encodings_to_try:
+                        try:
+                            df = self.pd.read_csv(file_path, encoding=encoding)
+                            break # 성공하면 루프 종료
+                        except UnicodeDecodeError:
+                            continue # 다음 인코딩 시도
+                    if df is None:
+                        raise ValueError(f"파일 인코딩을 감지할 수 없습니다. ({', '.join(encodings_to_try)} 시도됨)")
                 elif file_ext == '.txt':
-                    # TXT 파일 처리 (탭, 쉼표, 세미콜론 구분자 자동 감지)
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        first_line = f.readline()
-                    if '\t' in first_line:
-                        delimiter = '\t'
-                    elif ',' in first_line:
-                        delimiter = ','
-                    elif ';' in first_line:
-                        delimiter = ';'
-                    else:
-                        delimiter = None
-                    df = self.pd.read_csv(file_path, encoding='utf-8', delimiter=delimiter)
+                    delimiter = None
+                    first_line_decoded = False
+                    for encoding in encodings_to_try:
+                        try:
+                            with open(file_path, 'r', encoding=encoding) as f:
+                                first_line = f.readline()
+                            first_line_decoded = True # 첫 줄 읽기 성공
+                            if '\t' in first_line:
+                                delimiter = '\t'
+                            elif ',' in first_line:
+                                delimiter = ','
+                            elif ';' in first_line:
+                                delimiter = ';'
+                            else: # 구분자를 찾지 못한 경우, 일단 None으로 진행하거나 다른 로직 추가 가능
+                                delimiter = None 
+                            df = self.pd.read_csv(file_path, encoding=encoding, delimiter=delimiter)
+                            break # 성공하면 루프 종료
+                        except UnicodeDecodeError:
+                            continue # 다음 인코딩 시도
+                    if not first_line_decoded or df is None: # 첫 줄조차 못 읽었거나 df가 여전히 None이면
+                        raise ValueError(f"텍스트 파일 인코딩을 감지하거나 구분자를 찾을 수 없습니다. ({', '.join(encodings_to_try)} 시도됨)")
                 elif file_ext in ['.xlsx', '.xls']:
-                    # 엑셀 파일 처리
                     df = self.pd.read_excel(file_path)
                 else:
                     raise ValueError("지원하지 않는 파일 형식입니다.")
+
+                if df is None: # 모든 시도 후에도 df가 None이면 오류
+                    raise ValueError("파일을 읽을 수 없습니다. 지원하는 인코딩이 아니거나 파일이 손상되었을 수 있습니다.")
 
                 # DataFrame을 테이블에 표시
                 headers = df.columns.tolist()
