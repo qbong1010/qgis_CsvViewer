@@ -34,6 +34,22 @@ class CsvViewerDockWidget(QDockWidget):
         self.open_button.clicked.connect(self.open_csv)
         self.layout.addWidget(self.open_button)
 
+        # 기본 파일 버튼 레이아웃
+        self.default_files_layout = QHBoxLayout()
+        
+        # 행정동코드 버튼
+        self.admin_code_button = QPushButton("행정동코드")
+        self.admin_code_button.clicked.connect(lambda: self.open_default_csv('sources/default_data.csv'))
+        self.default_files_layout.addWidget(self.admin_code_button)
+        
+        # 용도지역분류코드 버튼
+        self.land_use_button = QPushButton("용도지역분류코드")
+        self.land_use_button.clicked.connect(lambda: self.open_default_csv('sources/default_data2.csv'))
+        self.default_files_layout.addWidget(self.land_use_button)
+        
+        # 기본 파일 버튼 레이아웃 추가
+        self.layout.addLayout(self.default_files_layout)
+
         # Search bar
         self.search_layout = QHBoxLayout()
         self.search_label = QLabel("Search:")
@@ -55,19 +71,32 @@ class CsvViewerDockWidget(QDockWidget):
         # Data storage
         self.original_data = []
         
-        # Load default CSV file
-        self.open_csv(default=True)
+        # 초기 기본 파일 불러오기 대신 테이블 초기화만 수행
+        self.init_table()
+
+    def init_table(self):
+        """테이블 초기화"""
+        self.table.setRowCount(0)
+        self.table.setColumnCount(0)
+        self.original_data = []
+
+    def open_default_csv(self, filename):
+        """지정된 기본 CSV 파일을 엽니다."""
+        file_path = os.path.join(os.path.dirname(__file__), filename)
+        self.load_file(file_path)
 
     def open_csv(self, default=False):
-        """Opens a CSV, TXT or Excel file and displays its content in the table."""
-        if default:
-            file_path = os.path.join(os.path.dirname(__file__), 'default_data.csv')
-        else:
-            file_path, _ = QFileDialog.getOpenFileName(
-                self, "파일 열기", "", 
-                "모든 지원 파일 (*.csv *.txt *.xlsx *.xls);;CSV 파일 (*.csv);;텍스트 파일 (*.txt);;엑셀 파일 (*.xlsx *.xls)"
-            )
+        """사용자가 선택한 CSV, TXT 또는 Excel 파일을 엽니다."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "파일 열기", "", 
+            "모든 지원 파일 (*.csv *.txt *.xlsx *.xls);;CSV 파일 (*.csv);;텍스트 파일 (*.txt);;엑셀 파일 (*.xlsx *.xls)"
+        )
         
+        if file_path and os.path.exists(file_path):
+            self.load_file(file_path)
+
+    def load_file(self, file_path):
+        """파일을 로드하고 테이블에 표시합니다."""
         if file_path and os.path.exists(file_path):
             try:
                 file_ext = os.path.splitext(file_path)[1].lower()
@@ -108,6 +137,9 @@ class CsvViewerDockWidget(QDockWidget):
 
                 # Clear search input
                 self.search_input.clear()
+                
+                # 파일명 표시
+                self.setWindowTitle(f"CSV Viewer by Qbong - {os.path.basename(file_path)}")
                 
             except Exception as e:
                 self.iface.messageBar().pushMessage(

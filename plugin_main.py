@@ -17,7 +17,7 @@ class CsvViewerPlugin:
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
         
         # Create action
-        icon_path = os.path.join(os.path.dirname(__file__), 'logo.webp')
+        icon_path = os.path.join(os.path.dirname(__file__), 'logo.png')
         self.action = QAction(
             QIcon(icon_path),
             "CSV Viewer",
