@@ -44,6 +44,7 @@ CSV 뷰어는 다음을 쉽게 해결해 줍니다:
 	버그를 발견하셨나요? 이 저장소의 Issues 탭에 남겨주세요. 
 	피드백도 언제나 환영합니다!
 	이슈 탭으로 이동해서 우측 상단의 "New issue" 버튼을 눌러 이슈를 등록해주세요!
+ 	아니면 메일을 주셔도 좋아요! jqb9510@gmail.com
 
 [이슈 탭 바로가기](https://github.com/qbong1010/qgis_CsvViewer/issues)
 
