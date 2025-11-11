@@ -4,7 +4,7 @@
 [![QGIS](https://img.shields.io/badge/QGIS-3.0+-green.svg)](https://qgis.org)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
-![qbong_logo](readme_image\BONG.png)
+![qbong_logo](readme_image\qbong.jpg)
 
 QGIS 환경에서 CSV 파일을 효율적으로 조회하고 검색할 수 있는 전문 플러그인입니다.
 
